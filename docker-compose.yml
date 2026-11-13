@@ -1,0 +1,37 @@
+version: "3.9"
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: familyfinance-backend
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      - DATABASE_URL=${DATABASE_URL:-sqlite:///./data/family_alpha.db}
+      - FAMILY_ACCESS_PIN=${FAMILY_ACCESS_PIN:-0410}
+      - PRIMARY_AI_MODEL=${PRIMARY_AI_MODEL:-gemini-3.8-flash}
+      - FALLBACK_AI_MODEL=${FALLBACK_AI_MODEL:-gemini-3.5-flash-lite}
+    volumes:
+      - familyfinance_data:/app/data
+    restart: unless-stopped
+
+  frontend:
+    image: node:20-alpine
+    container_name: familyfinance-frontend
+    working_dir: /app
+    volumes:
+      - ./frontend:/app
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_API_BASE_URL=http://localhost:8000
+    command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
+    depends_on:
+      - backend
+
+volumes:
+  familyfinance_data:

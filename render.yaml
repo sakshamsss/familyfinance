@@ -1,0 +1,27 @@
+services:
+  - type: web
+    name: familyfinance-backend
+    env: python
+    rootDir: backend
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.0
+      - key: FAMILY_ACCESS_PIN
+        value: "0410"
+      - key: PRIMARY_AI_MODEL
+        value: gemini-3.8-flash
+      - key: FALLBACK_AI_MODEL
+        value: gemini-3.5-flash-lite
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: DATABASE_URL
+        sync: false
+      - key: FINNHUB_API_KEY
+        sync: false
+      - key: NSE_MCP_BHAVCOPY_URL
+        value: https://mcp.nseindia.in/bhavcopy/cm/mcp
+      - key: NSE_MCP_CM_MARKET_URL
+        value: https://mcp.nseindia.in/cmmkt/mcp
